@@ -67,6 +67,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/src/server/game
   ${CMAKE_SOURCE_DIR}/src/server/game/Accounts
   ${CMAKE_SOURCE_DIR}/src/server/game/Achievements
+  ${CMAKE_SOURCE_DIR}/src/server/game/Anticheat
   ${CMAKE_SOURCE_DIR}/src/server/game/Addons
   ${CMAKE_SOURCE_DIR}/src/server/game/AI
   ${CMAKE_SOURCE_DIR}/src/server/game/AI/CoreAI
