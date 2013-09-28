@@ -1233,6 +1233,12 @@ void Spell::SelectImplicitAreaTargets(SpellEffIndex effIndex, SpellImplicitTarge
     /// @todo remove this
     for (std::list<WorldObject*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
     {
+		//BSWOW-CRASH 28/09/13 Caiu aqui na if (Unit* unitTarget = (*itr)->ToUnit()), tentando descobrir
+		if(!(*itr)->ToUnit()){
+			TC_LOG_ERROR(LOG_FILTER_SPELLS_AURAS, "BSWOW-CRASH: Spell::SelectImplicitAreaTargets");
+			continue;
+		}
+		//BS
         if (Unit* unitTarget = (*itr)->ToUnit())
             unitTargets.push_back(unitTarget);
         else if (GameObject* gObjTarget = (*itr)->ToGameObject())
