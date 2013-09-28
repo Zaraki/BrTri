@@ -303,7 +303,15 @@ Unit::~Unit()
     ASSERT(!m_duringRemoveFromWorld);
     ASSERT(!m_attacking);
     ASSERT(m_attackers.empty());
-    ASSERT(m_sharedVision.empty());
+	//BSWOW-CRASH 04/08/12 Ta caindo mto nesta porra
+    //ASSERT(m_sharedVision.empty());
+	if(!m_sharedVision.empty()){
+		std::stringstream msg;
+		msg << "BSWOW-CRASH Critico: ASSERT(m_sharedVision.empty()) Unit: " << this->GetGUID() << " " << this->GetName();
+		TC_LOG_ERROR(LOG_FILTER_PLAYER, msg.str().c_str());
+		m_sharedVision.clear();
+	}
+	//BS
     ASSERT(m_Controlled.empty());
     ASSERT(m_appliedAuras.empty());
     ASSERT(m_ownedAuras.empty());
@@ -670,6 +678,58 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
 
     uint32 health = victim->GetHealth();
     TC_LOG_DEBUG(LOG_FILTER_UNITS, "Unit " UI64FMTD " dealt %u damage to unit " UI64FMTD, GetGUID(), damage, victim->GetGUID());
+
+	//BSWOW-HACK 30/07/12 Dar report ingame para danos altos demais, e bloquear dano máximo - Recolocado no BrTri em 27/9/13
+	if ( damage > 60000 && ToPlayer() && !ToPlayer()->IsGameMaster() && !ToPlayer()->IsMounted() && damagetype != SELF_DAMAGE && damagetype != NODAMAGE
+		&& ToPlayer()->GetAreaId() != 3803 ){
+		std::stringstream msg;
+		msg << "AHW: " << this->GetName() << " dano: " << damage << " em " << victim->GetName();
+		
+		switch(damagetype){
+			case DIRECT_DAMAGE: msg << " (Direct"; break;
+			case SPELL_DIRECT_DAMAGE: msg << " (Spell"; break;
+			case DOT: msg << " (Dot"; break;
+			case NODAMAGE: msg << " (NoDamage"; break;
+			case SELF_DAMAGE: msg << " (Self"; break;
+		}
+
+		if(spellProto)
+			msg << " " << spellProto->Id;
+
+		switch(damageSchoolMask){
+			case SPELL_SCHOOL_MASK_NORMAL: msg << " Normal)"; break;
+			case SPELL_SCHOOL_MASK_HOLY: msg << " Holy)"; break;
+			case SPELL_SCHOOL_MASK_FIRE: msg << " Fire)"; break;
+			case SPELL_SCHOOL_MASK_NATURE: msg << " Nature)"; break;
+			case SPELL_SCHOOL_MASK_FROST: msg << " Frost)"; break;
+			case SPELL_SCHOOL_MASK_SHADOW: msg << " Shadow)"; break;
+			case SPELL_SCHOOL_MASK_ARCANE: msg << " Arcane)"; break;
+		}
+
+		if(spellProto){
+			if( ToPlayer()->HasAura(71532) || ToPlayer()->HasAura(70867) || ToPlayer()->HasAura(71473) || ToPlayer()->HasAura(71533) || ToPlayer()->HasAura(58549)
+				|| ToPlayer()->HasAura(63034) || ToPlayer()->HasAura(63221) || ToPlayer()->HasAura(64576) || ToPlayer()->HasAura(71289) || ToPlayer()->HasAura(70867) 
+				|| ToPlayer()->HasAura(70871) || ToPlayer()->HasAura(70872) || ToPlayer()->HasAura(70879) || ToPlayer()->HasAura(70949) || ToPlayer()->HasAura(70950)
+				|| ToPlayer()->HasAura(71473) || ToPlayer()->HasAura(71525) || ToPlayer()->HasAura(71530) || ToPlayer()->HasAura(71531) || ToPlayer()->HasAura(71532)
+				|| ToPlayer()->HasAura(71533) 
+				|| victim->GetGUID() == 37955
+				|| spellProto->Id == 56578 || spellProto->Id == 20625 || spellProto->Id == 25228 || spellProto->Id == 35139){
+				if (damage > 120000){
+					sWorld->SendGMText(LANG_GM_BROADCAST, msg.str().c_str());
+					TC_LOG_ERROR(LOG_FILTER_PLAYER, msg.str().c_str());
+					damage = 119978;
+				}
+			}
+			else{
+				if (damage > 60000){
+					sWorld->SendGMText(LANG_GM_BROADCAST, msg.str().c_str());
+					TC_LOG_ERROR(LOG_FILTER_PLAYER, msg.str().c_str());
+					damage = 59921;
+				}
+			}
+		}
+	}
+	//BS
 
     // duel ends when player has 1 or less hp
     bool duel_hasEnded = false;
@@ -12289,6 +12349,10 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
     if (rate < 0)
         rate = 0.0f;
 
+	//BSWOW-ANTICHEAT 27/07/12 - Recolocado no BrTri em 27/9/13
+	if (rate > 50)
+		rate = 50.0f;
+
     // Update speed only on change
     if (m_speed_rate[mtype] == rate)
         return;
@@ -13611,7 +13675,10 @@ void CharmInfo::InitEmptyActionBar(bool withAttack)
 void CharmInfo::InitPossessCreateSpells()
 {
     InitEmptyActionBar();
-    if (_unit->GetTypeId() == TYPEID_UNIT)
+	//BSWOW-FIX 12/05/12 Já tinha colocado pra ver se é vehicle, agora ignorando pra 2 creatures - Recolocado no BrTri em 27/9/13
+	if ( ( _unit->GetTypeId() == TYPEID_UNIT && _unit->IsVehicle()) || (_unit->GetGUIDMid() == 28670 || _unit->GetGUIDMid() == 28511) )
+	//if (_unit->GetTypeId() == TYPEID_UNIT)
+	//BS
     {
         for (uint32 i = 0; i < CREATURE_MAX_SPELLS; ++i)
         {
@@ -15658,7 +15725,15 @@ bool Unit::SetCharmedBy(Unit* charmer, CharmType type, AuraApplication const* au
         charmer->RemoveAurasByType(SPELL_AURA_MOUNTED);
 
     ASSERT(type != CHARM_TYPE_POSSESS || charmer->GetTypeId() == TYPEID_PLAYER);
-    ASSERT((type == CHARM_TYPE_VEHICLE) == IsVehicle());
+	//BSWOW-CRASH 04/08/12 - Recolocado no BrTri em 27/9/13
+	//ASSERT((type == CHARM_TYPE_VEHICLE) == IsVehicle());
+	if( (type == CHARM_TYPE_VEHICLE) != IsVehicle() ){
+		std::stringstream msg;
+		msg << "BSWOW-CRASH: Unit::SetCharmedBy Charmer: " << charmer->GetName() << " Unit: " << this->GetName() << " MapId: " << this->GetMapId();
+		TC_LOG_ERROR(LOG_FILTER_PLAYER, msg.str().c_str());
+		return false;
+	}
+	//BS
 
     TC_LOG_DEBUG(LOG_FILTER_UNITS, "SetCharmedBy: charmer %u (GUID %u), charmed %u (GUID %u), type %u.", charmer->GetEntry(), charmer->GetGUIDLow(), GetEntry(), GetGUIDLow(), uint32(type));
 

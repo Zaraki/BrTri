@@ -7,7 +7,8 @@
 
 #include "ScriptSystem.h"
 
-#define DEFAULT_MAX_PLAYER_DISTANCE 50
+//BSWOW-FIX 04/04/12 Aumentado para facilitar os escorts, era 50 Mas a funçao nao respeita isso :(
+#define DEFAULT_MAX_PLAYER_DISTANCE 150
 
 struct Escort_Waypoint
 {

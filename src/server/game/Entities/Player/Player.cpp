@@ -13677,7 +13677,14 @@ void Player::UpdateSoulboundTradeItems()
     // also checks for garbage data
     for (ItemDurationList::iterator itr = m_itemSoulboundTradeable.begin(); itr != m_itemSoulboundTradeable.end();)
     {
-        ASSERT(*itr);
+		//BSWOW-CRASH 25/07/12 Removendo outro Assert - Recolocado no BrTri em 27/9/13
+        //ASSERT(*itr);
+		if(!*itr){
+			TC_LOG_ERROR(LOG_FILTER_PLAYER, "BSWOW-CRASH: Player::UpdateSoulboundTradeItems(). Crash Evitado!");
+			continue;
+		}
+		//BS
+
         if ((*itr)->GetOwnerGUID() != GetGUID())
         {
             m_itemSoulboundTradeable.erase(itr++);

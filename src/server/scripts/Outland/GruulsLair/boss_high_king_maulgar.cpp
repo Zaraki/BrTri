@@ -250,10 +250,13 @@ public:
 
         void JustDied(Unit* /*killer*/) OVERRIDE
         {
-            if (Creature* maulgar = ObjectAccessor::GetCreature(*me, instance->GetData64(DATA_MAULGAR)))
-                maulgar->AI()->DoAction(ACTION_ADD_DEATH);
+			//BSWOW-CRASH 11/04/12 - Recolocado no BrTri em 27/9/13
+			if(instance && me){
+				if (Creature* maulgar = ObjectAccessor::GetCreature(*me, instance->GetData64(DATA_MAULGAR)))
+					maulgar->AI()->DoAction(ACTION_ADD_DEATH);
 
-            instance->SetBossState(DATA_MAULGAR, DONE);
+				instance->SetBossState(DATA_MAULGAR, DONE);
+			}
         }
 
         void UpdateAI(uint32 diff) OVERRIDE

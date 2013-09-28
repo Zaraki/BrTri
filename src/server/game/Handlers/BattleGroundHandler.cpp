@@ -516,6 +516,15 @@ void WorldSession::HandleBattlefieldLeaveOpcode(WorldPacket& recvData)
             if (bg->GetStatus() != STATUS_WAIT_LEAVE)
                 return;
 
+	//BSWOW-FIX 17/05/12 Não deixar o cara fugir da Arena - Recolocado no BrTri em 27/09/13
+	if (Battleground* bg = _player->GetBattleground()){
+		//sLog->outBasic("Type: %u, Status: %u",bg->GetTypeID(), bg->GetStatus());
+		if( (bg->GetTypeID() == 4 || bg->GetTypeID() == 5 || bg->GetTypeID() == 8 || bg->GetTypeID() == 10 || bg->GetTypeID() == 11)
+			&& (bg->GetStatus() == STATUS_WAIT_JOIN || bg->GetStatus() == STATUS_IN_PROGRESS) )
+				return;
+	}
+	//BS
+
     _player->LeaveBattleground();
 }
 

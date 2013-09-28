@@ -1323,6 +1323,21 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                             default:
                                 TC_LOG_ERROR(LOG_FILTER_SPELLS_AURAS, "Aura::HandleAuraSpecificMods: Unknown rank of Crypt Fever/Ebon Plague (%d) found", aurEff->GetId());
                         }
+						//BSWOW-FIX 02/08/12 Fiz com o zaraki, parece que arrumou - Recolocado no BrTri em 27/9/13
+						if(target->HasAura(51735))
+							target->RemoveAura(51735);
+						if(target->HasAura(51734))
+							target->RemoveAura(51734);
+						if( target->HasAura(51726) )
+							target->RemoveAura(51726);
+						if( target->HasAura(50510) ) 
+							target->RemoveAura(50510);
+						if( target->HasAura(50509) )
+							target->RemoveAura(50509);
+						if( target->HasAura(50508) )
+							target->RemoveAura(50508);
+						//BS
+
                         caster->CastSpell(target, spellId, true, 0, GetEffect(0));
                     }
                 }

@@ -156,7 +156,9 @@ void Vehicle::Uninstall()
     TC_LOG_DEBUG(LOG_FILTER_VEHICLES, "Vehicle::Uninstall Entry: %u, GuidLow: %u", _creatureEntry, _me->GetGUIDLow());
     RemoveAllPassengers();
 
-    if (GetBase()->GetTypeId() == TYPEID_UNIT)
+	//BSWOW-CRASH 10/04/12 - Recolocado no BrTri em 27/9/13
+    //if (GetBase()->GetTypeId() == TYPEID_UNIT)
+	if (GetBase() && GetBase()->GetTypeId() == TYPEID_UNIT)
         sScriptMgr->OnUninstall(this);
 }
 
@@ -502,7 +504,16 @@ Vehicle* Vehicle::RemovePassenger(Unit* unit)
         return NULL;
 
     SeatMap::iterator seat = GetSeatIteratorForPassenger(unit);
-    ASSERT(seat != Seats.end());
+	//BSWOW-FIX 09/05/12 Tentando descobrir pq entra nesse assert - Recolocado no BrTri em 27/9/13
+	//Removendo esse assert, ja que cai quando o cara vai na quest, e vou kickar o unit por segurança
+	if( seat == Seats.end() ){
+		TC_LOG_ERROR(LOG_FILTER_PLAYER,"BSWOW-CRASH: ASSERT RemovePassenger: Name: %s Map: %u X:%f, Y:%f, Z:%f",unit->GetName(), unit->GetMapId(), unit->GetPositionX(), unit->GetPositionY(), unit->GetPositionZ());
+		unit->RemoveAllAuras();
+		unit->RemoveFromWorld();
+		return NULL;
+	}
+    //ASSERT(seat != Seats.end());
+	//BS
 
     TC_LOG_DEBUG(LOG_FILTER_VEHICLES, "Unit %s exit vehicle entry %u id %u dbguid %u seat %d",
         unit->GetName().c_str(), _me->GetEntry(), _vehicleInfo->m_ID, _me->GetGUIDLow(), (int32)seat->first);

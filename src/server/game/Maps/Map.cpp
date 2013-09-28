@@ -329,6 +329,12 @@ void Map::EnsureGridCreated(const GridCoord &p)
 //But object data is not loaded here
 void Map::EnsureGridCreated_i(const GridCoord &p)
 {
+	//BSWOW-CRASH 06/08/12 Descobri que o valor inválido da coord chega por aqui, entao vou ver se dá pra evitar a queda, mas continuar procurando daonde veio
+	if(p.x_coord > MAX_NUMBER_OF_GRIDS || p.y_coord > MAX_NUMBER_OF_GRIDS){
+		return;
+	}
+	//BSWOW
+
     if (!getNGrid(p.x_coord, p.y_coord))
     {
         TC_LOG_DEBUG(LOG_FILTER_MAPS, "Creating grid[%u, %u] for map %u instance %u", p.x_coord, p.y_coord, GetId(), i_InstanceId);
@@ -2153,7 +2159,9 @@ void Map::RemoveAllObjectsInRemoveList()
             {
                 Corpse* corpse = ObjectAccessor::GetCorpse(*obj, obj->GetGUID());
                 if (!corpse)
-                    TC_LOG_ERROR(LOG_FILTER_MAPS, "Tried to delete corpse/bones %u that is not in map.", obj->GetGUIDLow());
+					//BSWOW-CRASH 29/07/12 Parece que ta caindo na mensagem, vo tirar o %u dela.
+					//TC_LOG_ERROR(LOG_FILTER_MAPS, "Tried to delete corpse/bones %u that is not in map.", obj->GetGUIDLow());
+                    TC_LOG_ERROR(LOG_FILTER_MAPS, "Tried to delete corpse/bones that is not in map.");
                 else
                     RemoveFromMap(corpse, true);
                 break;
@@ -2165,6 +2173,12 @@ void Map::RemoveAllObjectsInRemoveList()
             RemoveFromMap((GameObject*)obj, true);
             break;
         case TYPEID_UNIT:
+			//BSWOW-CRASH 19/07/12
+			if(!obj->ToCreature()){
+				TC_LOG_ERROR(LOG_FILTER_MAPS, "BSWOW-CRASH: !obj->ToCreature() evitado");
+				break;
+			}
+			//BSWOW
             // in case triggered sequence some spell can continue casting after prev CleanupsBeforeDelete call
             // make sure that like sources auras/etc removed before destructor start
             obj->ToCreature()->CleanupsBeforeDelete();

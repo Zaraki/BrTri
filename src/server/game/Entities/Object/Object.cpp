@@ -106,7 +106,8 @@ Object::~Object()
         TC_LOG_FATAL(LOG_FILTER_GENERAL, "Object::~Object - guid="UI64FMTD", typeid=%d, entry=%u deleted but still in world!!", GetGUID(), GetTypeId(), GetEntry());
         if (isType(TYPEMASK_ITEM))
             TC_LOG_FATAL(LOG_FILTER_GENERAL, "Item slot %u", ((Item*)this)->GetSlot());
-        ASSERT(false);
+		//BSWOW-CRASH
+        //ASSERT(false);
         RemoveFromWorld();
     }
 

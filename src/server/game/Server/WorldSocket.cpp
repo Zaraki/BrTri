@@ -917,15 +917,18 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
         address.c_str());
 
     // Check if this user is by any chance a recruiter
-    stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_RECRUITER);
+	//BSWOW-FIX 14/08/12- Recolocado no BrTri em 27/9/13
+	//Comando lento
+    //stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_RECRUITER);
 
-    stmt->setUInt32(0, id);
+    //stmt->setUInt32(0, id);
 
-    result = LoginDatabase.Query(stmt);
+    //result = LoginDatabase.Query(stmt);
 
     bool isRecruiter = false;
-    if (result)
-        isRecruiter = true;
+    //if (result)
+    //    isRecruiter = true;
+	//BS
 
     // Update the last_ip in the database
 

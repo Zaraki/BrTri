@@ -5924,6 +5924,38 @@ void Spell::EffectCastButtons(SpellEffIndex effIndex)
         uint32 spell_id = ab->GetAction();
         if (!spell_id)
             continue;
+		
+		//BSWOW-HACK 30/07/12 Bloqueando spell_ids para os seguintes botoes
+		if (button_id >= 132 && button_id <= 143){
+
+			uint32 spell_list[] = {16041, 16108, 16112, 16116, 16130, 16161, 16164, 16198, 16206, 16209, 16213, 16217, 16221, 16225, 16229, 16232, 16240, 16272, 16284, 16287, 16293, 16305, 16309, 16544, 
+16582, 17489, 20550, 20551, 20552, 20608, 28998, 29000, 29065, 29080, 29086, 29180, 29191, 29193, 29202, 30666, 30674, 30679, 30809, 30814, 30819, 30866, 30869, 30873, 
+30886, 36591, 43338, 51470, 51479, 51482, 51486, 51522, 51524, 51527, 51532, 51555, 51558, 51561, 51566, 51881, 51885, 52456, 60188, 62101, 63372, 63374, 75461};
+
+			uint32 n = 0;
+			while (spell_list[n]){
+				if (spell_id == spell_list[n]){
+					sWorld->BanAccount(BAN_CHARACTER, p_caster->GetName(), "-1", "Uso de Hack/WPE", "AntiHack WoW-Brasil");
+
+					std::string msg;
+					msg = std::string(p_caster->GetName()) + " foi banido por uso de Hack.";
+					sWorld->SendServerMessage(SERVER_MSG_STRING, msg.c_str());
+
+					std::string msggm;
+					msggm = std::string(p_caster->GetName()) + " foi banido por uso de WPE.";
+					sWorld->SendGMText(LANG_GM_BROADCAST, msggm.c_str());
+
+					std::stringstream msgdb;
+					msgdb << "BSWOW-HACK: Player: " << p_caster->GetName() << " Spell: " << spell_id << " Button_id: " << button_id;
+					TC_LOG_ERROR(LOG_FILTER_PLAYER, msgdb.str().c_str());
+
+					TC_LOG_INFO(LOG_FILTER_PLAYER,"BSWOW-HACK: Player: %s Spell %u no Button_id: %u", p_caster->GetName(), spell_id, button_id);
+					return;
+				}
+				n++;
+			}
+		}
+		//BS
 
         SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spell_id);
         if (!spellInfo)

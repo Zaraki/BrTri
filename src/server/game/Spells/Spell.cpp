@@ -2384,6 +2384,10 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
 
     SpellMissInfo missInfo = target->missCondition;
 
+	//BSWOW-FIX 21/04/12 Fix para o bug de aggrar quando ta em evade - Recolocado no BrTri em 27/9/13
+	if (unit->HasUnitState(UNIT_STATE_EVADE))
+		missInfo = SPELL_MISS_EVADE;
+
     // Need init unitTarget by default unit (can changed in code on reflect)
     // Or on missInfo != SPELL_MISS_NONE unitTarget undefined (but need in trigger subsystem)
     unitTarget = unit;

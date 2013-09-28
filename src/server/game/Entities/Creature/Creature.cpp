@@ -539,7 +539,9 @@ void Creature::Update(uint32 diff)
             {
                 // do not allow the AI to be changed during update
                 m_AI_locked = true;
-                i_AI->UpdateAI(diff);
+				//BSWOW-CRASH Crashou aqui 25/07/12 - Recolocado no BrTri em 27/9/13
+				if(i_AI)
+					i_AI->UpdateAI(diff);
                 m_AI_locked = false;
             }
 

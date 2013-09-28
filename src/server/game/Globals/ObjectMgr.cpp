@@ -6183,12 +6183,18 @@ uint32 ObjectMgr::GenerateLowGuid(HighGuid guidhigh)
         }
         case HIGHGUID_UNIT:
         {
-            ASSERT(_hiCreatureGuid < 0x00FFFFFE && "Creature guid overflow!");
+			//BSWOW-CRASH
+            //ASSERT(_hiCreatureGuid < 0x00FFFFFE && "Creature guid overflow!");
+			TC_LOG_ERROR(LOG_FILTER_SQL, "BSWOW-CRASH: Creature guid overflow! Crash Evitado!");
+			//BS
             return _hiCreatureGuid++;
         }
         case HIGHGUID_PET:
         {
-            ASSERT(_hiPetGuid < 0x00FFFFFE && "Pet guid overflow!");
+			//BSWOW-CRASH
+            //ASSERT(_hiPetGuid < 0x00FFFFFE && "Pet guid overflow!");
+			TC_LOG_ERROR(LOG_FILTER_SQL, "BSWOW-CRASH: Pet guid overflow! Crash Evitado!");
+			//BS
             return _hiPetGuid++;
         }
         case HIGHGUID_VEHICLE:
