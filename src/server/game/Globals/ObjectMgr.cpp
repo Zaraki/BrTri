@@ -6185,6 +6185,7 @@ uint32 ObjectMgr::GenerateLowGuid(HighGuid guidhigh)
         {
 			//BSWOW-CRASH
             //ASSERT(_hiCreatureGuid < 0x00FFFFFE && "Creature guid overflow!");
+			if(_hiCreatureGuid > 0x00FFFFFE)
 			TC_LOG_ERROR(LOG_FILTER_SQL, "BSWOW-CRASH: Creature guid overflow! Crash Evitado!");
 			//BS
             return _hiCreatureGuid++;
@@ -6193,6 +6194,7 @@ uint32 ObjectMgr::GenerateLowGuid(HighGuid guidhigh)
         {
 			//BSWOW-CRASH
             //ASSERT(_hiPetGuid < 0x00FFFFFE && "Pet guid overflow!");
+			if (_hiPetGuid > 0x00FFFFFE)
 			TC_LOG_ERROR(LOG_FILTER_SQL, "BSWOW-CRASH: Pet guid overflow! Crash Evitado!");
 			//BS
             return _hiPetGuid++;
