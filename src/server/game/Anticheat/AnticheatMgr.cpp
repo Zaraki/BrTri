@@ -223,17 +223,17 @@ void AnticheatMgr::SpeedHackDetection(Player* player,MovementInfo movementInfo)
 
 	//BSWOW 21/10/12 Dar aviso e kikar jogador com conexao pobre
 	if (rand() < 80){
-		if(player->GetSession() && player->GetSession()->GetLatency() > 1000){
-			ChatHandler chH = ChatHandler(player->GetSession()); // NAO PODE TER ACENTOS
-			chH.PSendSysMessage("Sua conexao esta muito lenta! Se ela piorar ainda mais voce sera desconectado!");
+		if(player->GetSession() && player->GetSession()->GetLatency() > 4000){
+			ChatHandler chH = ChatHandler(player->GetSession());
+			chH.PSendSysMessage("Atencao! Sua conexao com o servidor esta horrivel, voce sera desconectado do jogo!");
 		}
 		else if(player->GetSession() && player->GetSession()->GetLatency() > 2000){
 			ChatHandler chH = ChatHandler(player->GetSession());
 			chH.PSendSysMessage("Sua conexao esta horrivel! Se ela piorar ainda mais voce sera desconectado!");
 		}
-		else if(player->GetSession() && player->GetSession()->GetLatency() > 4000){
-			ChatHandler chH = ChatHandler(player->GetSession());
-			chH.PSendSysMessage("Atencao! Sua conexao com o servidor esta horrivel, voce sera desconectado do jogo!");
+		else if(player->GetSession() && player->GetSession()->GetLatency() > 1000 ){
+			ChatHandler chH = ChatHandler(player->GetSession()); // NAO PODE TER ACENTOS
+			chH.PSendSysMessage("Sua conexao esta muito lenta! Se ela piorar ainda mais voce sera desconectado!");
 		}
 	}
 
@@ -362,12 +362,28 @@ void AnticheatMgr::BuildReport(Player* player,uint8 reportType)
 
     if (m_Players[key].GetTotalReports() > sWorld->getIntConfig(CONFIG_ANTICHEAT_REPORTS_INGAME_NOTIFICATION))
     {
-        // display warning at the center of the screen, hacky way?
-        std::string str = "";
-        str = "|cFFFFFC00[AC]|cFF00FFFF[|cFF60FF00" + std::string(player->GetName()) + "|cFF00FFFF] Possible cheater!";
-        WorldPacket data(SMSG_NOTIFICATION, (str.size()+1));
-        data << str;
-        sWorld->SendGlobalGMMessage(&data);
+		//BSWOW 26/11/11 - Recolocado 02/10/13 - Autoban para low level pra evitar fuleragem
+		if(player->getLevel() <= 40){
+			std::string msg;
+			msg = std::string(player->GetName()) + " foi banido por uso de Hack.";
+			sWorld->SendServerMessage(SERVER_MSG_STRING, msg.c_str());
+			sWorld->BanAccount(BAN_CHARACTER, player->GetName(), "1d", "Uso de Hack.", "AntiHack WoW-Brasil");
+		}
+		else{
+			// display warning at the center of the screen, hacky way?
+			std::string str = "";
+			str = "|cFFFFFC00[AC]|cFF00FFFF[|cFF60FF00" + std::string(player->GetName()) + "|cFF00FFFF] Possible cheater!";
+			WorldPacket data(SMSG_NOTIFICATION, (str.size()+1));
+			data << str;
+			sWorld->SendGlobalGMMessage(&data);
+
+			// Colocando mensagem no chat pra ficar mais fácil 02/10/13
+			if(rand() < 30){
+				std::string msg;
+				msg = std::string(player->GetName()) + " possível hack.";
+				sWorld->SendGMText(6613, msg.c_str());//Esse aqui foi testado em 15/09/13 e funciona bem.
+			}
+		}
     }
 }
 
