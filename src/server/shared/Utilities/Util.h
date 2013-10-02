@@ -171,7 +171,24 @@ inline bool isExtendedLatinCharacter(wchar_t wchar)
 {
     if (isBasicLatinCharacter(wchar))
         return true;
-    if (wchar >= 0x00C0 && wchar <= 0x00D6)                  // LATIN CAPITAL LETTER A WITH GRAVE - LATIN CAPITAL LETTER O WITH DIAERESIS
+	//BSWOW-FIX 02/10/13 - Caracteres permitidos com acentos! EEEEEba!
+	if (wchar == 0x00CD && wchar == 0X00DA && wchar == 0X00ED && wchar == 0X00F1 && wchar == 0X00FA)                  // Í Ú í ú
+        return true;
+	if (wchar >= 0x00E0 && wchar <= 0x00E3)                  // a
+        return true;
+	if (wchar >= 0x00E7 && wchar <= 0x00EA)                  // ç e
+        return true;
+	if (wchar >= 0x00F3 && wchar <= 0x00F5)                  // O
+        return true;
+	if (wchar >= 0x00C1 && wchar <= 0x00C3)                  // Á Â Ã
+        return true;
+	if (wchar >= 0x00C9 && wchar <= 0x00CA)                  // É Ê
+        return true;
+	if (wchar >= 0x00D3 && wchar <= 0x00D5)                  // Ó Õ Ô
+        return true;
+	
+
+    /*if (wchar >= 0x00C0 && wchar <= 0x00D6)                  // LATIN CAPITAL LETTER A WITH GRAVE - LATIN CAPITAL LETTER O WITH DIAERESIS
         return true;
     if (wchar >= 0x00D8 && wchar <= 0x00DE)                  // LATIN CAPITAL LETTER O WITH STROKE - LATIN CAPITAL LETTER THORN
         return true;
@@ -184,7 +201,7 @@ inline bool isExtendedLatinCharacter(wchar_t wchar)
     if (wchar >= 0x0100 && wchar <= 0x012F)                  // LATIN CAPITAL LETTER A WITH MACRON - LATIN SMALL LETTER I WITH OGONEK
         return true;
     if (wchar == 0x1E9E)                                     // LATIN CAPITAL LETTER SHARP S
-        return true;
+        return true;*/
     return false;
 }
 
