@@ -430,6 +430,14 @@ void WorldSession::LogoutPlayer(bool save)
         if (uint64 lguid = _player->GetLootGUID())
             DoLootRelease(lguid);
 
+		//BSWOW-FIX 11/10/13 Fix para o cara morrer quando desloga dentro de Raid quando está em combate.
+		if(_player->IsInCombat()){
+			if(_player->GetMap() && _player->GetMap()->IsRaidOrHeroicDungeon()){
+				_player->KillPlayer();
+			}
+		}
+		//BS
+
         ///- If the player just died before logging out, make him appear as a ghost
         //FIXME: logout must be delayed in case lost connection with client in time of combat
         if (_player->GetDeathTimer())
@@ -519,7 +527,7 @@ void WorldSession::LogoutPlayer(bool save)
             _player->GetGroup()->SendUpdate();
             _player->GetGroup()->ResetMaxEnchantingLevel();
         }
-
+		
         //! Broadcast a logout message to the player's friends
         sSocialMgr->SendFriendStatus(_player, FRIEND_OFFLINE, _player->GetGUIDLow(), true);
         sSocialMgr->RemovePlayerSocial(_player->GetGUIDLow());

@@ -500,6 +500,16 @@ bool Group::RemoveMember(uint64 guid, const RemoveMethod& method /*= GROUP_REMOV
         Player* player = ObjectAccessor::FindPlayer(guid);
         if (player)
         {
+			//BSWOW-FIX 11/10/2013 Fix porco para mandar o cara pra fora de instance qdo ele sai de um grupo.
+			switch(player->GetMapId()){
+				case 603: player->TeleportTo(571, (float)9227, (float)-1114, (float)1216.3, (float)0); break; //Ulduar
+				case 624: player->TeleportTo(571, (float)5480, (float)2840, (float)418.8, (float)3.14); break;//Vault
+				case 631: player->TeleportTo(571, (float)6447, (float)2060, (float)564.2, (float)3.3); break; //ICC
+				case 649: player->TeleportTo(571, (float)8516, (float)673, (float)558.5, (float)1.6); break;//TOC
+				case 724: player->TeleportTo(571, (float)3586, (float)217, (float)-120.2, (float)5.4); break; //Ruby
+			}
+			//BS
+
             // Battleground group handling
             if (isBGGroup() || isBFGroup())
                 player->RemoveFromBattlegroundOrBattlefieldRaid();
@@ -689,6 +699,16 @@ void Group::Disband(bool hideDestroy /* = false */)
         player = ObjectAccessor::FindPlayer(citr->guid);
         if (!player)
             continue;
+
+		//BSWOW-FIX 11/10/2013 Fix porco para mandar o cara pra fora de instance qdo ele sai de um grupo.
+			switch(player->GetMapId()){
+				case 603: player->TeleportTo(571, (float)9227, (float)-1114, (float)1216.3, (float)0); break; //Ulduar
+				case 624: player->TeleportTo(571, (float)5480, (float)2840, (float)418.8, (float)3.14); break;//Vault
+				case 631: player->TeleportTo(571, (float)6447, (float)2060, (float)564.2, (float)3.3); break; //ICC
+				case 649: player->TeleportTo(571, (float)8516, (float)673, (float)558.5, (float)1.6); break;//TOC
+				case 724: player->TeleportTo(571, (float)3586, (float)217, (float)-120.2, (float)5.4); break; //Ruby
+			}
+		//BS
 
         //we cannot call _removeMember because it would invalidate member iterator
         //if we are removing player from battleground raid
