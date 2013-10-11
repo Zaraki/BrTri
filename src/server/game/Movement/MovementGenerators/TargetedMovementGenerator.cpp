@@ -45,6 +45,7 @@ void TargetedMovementGeneratorMedium<T, D>::_setTargetLocation(T* owner, bool up
         if (!i_offset)
         {
             // to nearest contact position
+			TC_LOG_DEBUG(LOG_FILTER_MAPS, "++ TargetedMovementGeneratorMedium");
             i_target->GetContactPoint(owner, x, y, z);
         }
         else

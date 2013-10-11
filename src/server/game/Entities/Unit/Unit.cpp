@@ -477,6 +477,13 @@ bool Unit::IsWithinMeleeRange(const Unit* obj, float dist) const
     float sizefactor = GetMeleeReach() + obj->GetMeleeReach();
     float maxdist = dist + sizefactor;
 
+	//BSWOW
+	if (!IsWithinLOSInMap(obj)){
+		TC_LOG_DEBUG(LOG_FILTER_MAPS, "++ Unit::IsWithinMeleeRange: False por LOS");
+		return false;
+	}
+
+	TC_LOG_DEBUG(LOG_FILTER_MAPS, "++ Unit::IsWithinMeleeRange: distq: %f, maxdist*maxdist: %f",distsq, maxdist * maxdist);
     return distsq < maxdist * maxdist;
 }
 
@@ -489,6 +496,9 @@ void Unit::GetRandomContactPoint(const Unit* obj, float &x, float &y, float &z, 
     uint32 attacker_number = getAttackers().size();
     if (attacker_number > 0)
         --attacker_number;
+
+	TC_LOG_DEBUG(LOG_FILTER_MAPS, "++ Unit::GetRandomContactPoint SearcherSize = distance2dMin: %f, distance2dMax: %f, random_example: %f",distance2dMin,distance2dMax,(float)rand_norm());
+
     GetNearPoint(obj, x, y, z, obj->GetCombatReach(), distance2dMin+(distance2dMax-distance2dMin) * (float)rand_norm()
         , GetAngle(obj) + (attacker_number ? (static_cast<float>(M_PI/2) - static_cast<float>(M_PI) * (float)rand_norm()) * float(attacker_number) / combat_reach * 0.3f : 0));
 }

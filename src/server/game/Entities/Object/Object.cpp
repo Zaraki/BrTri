@@ -2634,6 +2634,7 @@ void WorldObject::GetNearPoint(WorldObject const* /*searcher*/, float &x, float 
 void WorldObject::GetClosePoint(float &x, float &y, float &z, float size, float distance2d /*= 0*/, float angle /*= 0*/) const
 {
     // angle calculated from current orientation
+	TC_LOG_DEBUG(LOG_FILTER_MAPS, "++ WorldObject::GetClosePoint()");
     GetNearPoint(NULL, x, y, z, size, distance2d, GetOrientation() + angle);
 }
 
@@ -2657,8 +2658,15 @@ void WorldObject::GetRandomNearPosition(Position &pos, float radius)
 
 void WorldObject::GetContactPoint(const WorldObject* obj, float &x, float &y, float &z, float distance2d /*= CONTACT_DISTANCE*/) const
 {
-    // angle to face `obj` to `this` using distance includes size of `obj`
-    GetNearPoint(obj, x, y, z, obj->GetObjectSize(), distance2d, GetAngle(obj));
+	//BSWOW-FIX 10/10/13 Fix para o bixo não conseguir pegar atrás da parede.
+	TC_LOG_DEBUG(LOG_FILTER_MAPS, "++ WorldObject::GetContactPoint() ObjSize: %f, inLOS: %d, distancia: %f",obj->GetObjectSize(), IsWithinLOSInMap(obj), GetDistance2d(obj) );
+
+	// angle to face `obj` to `this` using distance includes size of `obj`
+	if(IsWithinLOSInMap(obj))
+		GetNearPoint(obj, x, y, z, obj->GetObjectSize(), distance2d, GetAngle(obj)); //UNICA LINHA ORIGINAL
+	else
+		GetNearPoint(obj, x, y, z, (float)0.1, (float)0.1, GetAngle(obj));
+	//BS
 }
 
 float WorldObject::GetObjectSize() const
