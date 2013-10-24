@@ -215,8 +215,8 @@ void AnticheatMgr::SpeedHackDetection(Player* player,MovementInfo movementInfo)
     // we did the (uint32) cast to accept a margin of tolerance
     if (clientSpeedRate > speedRate)
     {
-		//BSWOW
-		if(player->GetSession() && player->GetSession()->GetLatency() < 1000 && player->GetSession()->GetLatency() > 0)
+		//BSWOW Mod 24/10/13 Nao reportar quem ta sob efeito de mind control
+		if(player->GetSession() && player->GetSession()->GetLatency() < 1000 && player->GetSession()->GetLatency() > 0 && !player->GetAura(605))
         BuildReport(player,SPEED_HACK_REPORT);
         //sLog->outError("AnticheatMgr:: Speed-Hack detected player GUID (low) %u",player->GetGUIDLow());
     }
@@ -237,8 +237,8 @@ void AnticheatMgr::SpeedHackDetection(Player* player,MovementInfo movementInfo)
 		}
 	}
 
-	//Especifico para Warsong
-	if ( player->GetMapId() == 489 && !player->isDead() ){
+	//Especifico para Warsong -- MOD 24/10/13 para nao funfar pra quem ta de mind control
+	if ( player->GetMapId() == 489 && !player->isDead() && !player->GetAura(605) ){
 		if (distance2D > 300 && distance2D < 3000 && (player->HasAura(23335) || player->HasAura(23333)) )
 		{
 			//Colocado Ban automático em 19/07/12 e mensagem de announce automática também.
