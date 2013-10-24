@@ -155,6 +155,10 @@ Map* MapManager::FindMap(uint32 mapid, uint32 instanceId) const
 
 bool MapManager::CanPlayerEnter(uint32 mapid, Player* player, bool loginCheck)
 {
+	//BSWOW-FIX 24/10/13 Não deixar low level entrar em outland
+	if (mapid == 571 && player->getLevel() < 68)
+		return false;
+
     MapEntry const* entry = sMapStore.LookupEntry(mapid);
     if (!entry)
        return false;
@@ -186,7 +190,7 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player, bool loginCheck)
     if (player->IsGameMaster())
         return true;
 
-    char const* mapName = entry->name[player->GetSession()->GetSessionDbcLocale()];
+	char const* mapName = entry->name[player->GetSession()->GetSessionDbcLocale()];
 
     Group* group = player->GetGroup();
     if (entry->IsRaid())

@@ -519,7 +519,7 @@ void WorldSession::HandleBattlefieldLeaveOpcode(WorldPacket& recvData)
 	std::cout << std::endl << "HandleBattlefieldLeaveOpcode ";
 	//BSWOW-FIX 17/05/12 Não deixar o cara fugir da Arena - Recolocado no BrTri em 27/09/13
 	if (Battleground* bg = _player->GetBattleground()){
-		std::cout << "Type:" << bg->GetTypeID() << " Status:" << bg->GetStatus();
+		//std::cout << "Type:" << bg->GetTypeID() << " Status:" << bg->GetStatus();
 		if( (bg->GetTypeID() == 4 || bg->GetTypeID() == 5 || bg->GetTypeID() == 6 || bg->GetTypeID() == 8 || bg->GetTypeID() == 10 || bg->GetTypeID() == 11)
 			&& (bg->GetStatus() == STATUS_WAIT_JOIN || bg->GetStatus() == STATUS_IN_PROGRESS) )
 				return;

@@ -2159,6 +2159,10 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
     if (GetMapId() == mapid)
     {
+		//BSWOW-FIX 24/10/13 Proteção pro cara não entrar low level na parte proibida de outland - CUIDADO QUE TEM 2!
+		if (mapid == 530 && x < 4795 && getLevel() < 38)
+			return false;
+
         //lets reset far teleport flag if it wasn't reset during chained teleports
         SetSemaphoreTeleportFar(false);
         //setup delayed teleport flag
@@ -2214,6 +2218,10 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         // this check not dependent from map instance copy and same for all instance copies of selected map
         if (!sMapMgr->CanPlayerEnter(mapid, this, false))
             return false;
+
+		//BSWOW-FIX 24/10/13 Proteção pro cara não entrar low level na parte proibida de outland - CUIDADO QUE TEM 2!
+		if (mapid == 530 && x < 4795 && getLevel() < 38)
+			return false;
 
         //I think this always returns true. Correct me if I am wrong.
         // If the map is not created, assume it is possible to enter it.
