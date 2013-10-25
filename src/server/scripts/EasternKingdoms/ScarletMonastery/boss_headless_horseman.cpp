@@ -580,11 +580,9 @@ public:
 
             Map::PlayerList const& players = me->GetMap()->GetPlayers();
             if (!players.isEmpty())
-				{
-					if (Group* group = players.begin()->GetSource()->GetGroup())
-						if (group->isLFGGroup())
-							sLFGMgr->FinishDungeon(group->GetGUID(), 285);
-				} 
+				//BSWOW-CRASH Fix 18/10/13 - O FIX DO TRINITY NAO PRESTA!! USAR O MEU
+				if(players.begin()->GetSource()->GetGroup())
+					sLFGMgr->FinishDungeon(players.begin()->GetSource()->GetGroup()->GetGUID(), 285);
         }
 
         void SpellHit(Unit* caster, const SpellInfo* spell) OVERRIDE
