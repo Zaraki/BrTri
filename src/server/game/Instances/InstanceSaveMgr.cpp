@@ -374,7 +374,7 @@ void InstanceSaveManager::LoadResetTimes()
             if (oldresettime != newresettime)
 				//BSWOW 17/12/13 Mod pra tentar desbugar o instance reset
                 //CharacterDatabase.DirectPExecute("UPDATE instance_reset SET resettime = '%u' WHERE mapid = '%u' AND difficulty = '%u'", uint32(newresettime), mapid, difficulty);
-				CharacterDatabase.DirectPExecute("UPDATE instance_reset SET resettime = '%u' + (CEIL(RAND()*10) * CEIL(RAND()*10)* CEIL(RAND()*10)) WHERE mapid = '%u' AND difficulty = '%u'", uint32(newresettime), mapid, difficulty);
+				CharacterDatabase.DirectPExecute("UPDATE instance_reset SET resettime = %u + (CEIL(RAND()*10) * CEIL(RAND()*10)* CEIL(RAND()*10)) WHERE mapid = '%u' AND difficulty = '%u'", uint32(newresettime), mapid, difficulty);
 
             SetResetTimeFor(mapid, difficulty, newresettime);
         } while (result->NextRow());
@@ -401,7 +401,9 @@ void InstanceSaveManager::LoadResetTimes()
         {
             // initialize the reset time
             t = today + period + diff;
-            CharacterDatabase.DirectPExecute("INSERT INTO instance_reset VALUES ('%u', '%u', '%u')", mapid, difficulty, (uint32)t);
+			//BSWOW 21/12/13 Mais mod pra desbugar o instance reset
+            //CharacterDatabase.DirectPExecute("INSERT INTO instance_reset VALUES ('%u', '%u', '%u')", mapid, difficulty, (uint32)t);
+			CharacterDatabase.DirectPExecute("INSERT INTO instance_reset VALUES ('%u', '%u', %u + (CEIL(RAND()*10) * CEIL(RAND()*10)* CEIL(RAND()*10)) )", mapid, difficulty, (uint32)t);
         }
 
         if (t < now)
@@ -410,7 +412,9 @@ void InstanceSaveManager::LoadResetTimes()
             // calculate the next reset time
             t = (t / DAY) * DAY;
             t += ((today - t) / period + 1) * period + diff;
-            CharacterDatabase.DirectPExecute("UPDATE instance_reset SET resettime = '"UI64FMTD"' + (CEIL(RAND()*10) * CEIL(RAND()*10)* CEIL(RAND()*10)) WHERE mapid = '%u' AND difficulty= '%u'", (uint64)t, mapid, difficulty);
+			//BSWOW 17/12/13 Mod pra tentar desbugar ao instance reset
+			//CharacterDatabase.DirectPExecute("UPDATE instance_reset SET resettime = '"UI64FMTD"' WHERE mapid = '%u' AND difficulty= '%u'", (uint64)t, mapid, difficulty);
+            CharacterDatabase.DirectPExecute("UPDATE instance_reset SET resettime = "UI64FMTD" + (CEIL(RAND()*10) * CEIL(RAND()*10)* CEIL(RAND()*10)) WHERE mapid = '%u' AND difficulty= '%u'", (uint64)t, mapid, difficulty);
         }
 
         SetResetTimeFor(mapid, difficulty, t);
