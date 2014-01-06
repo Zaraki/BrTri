@@ -387,6 +387,16 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recvData)
     {
         plrMover->UpdateFallInformationIfNeed(movementInfo, opcode);
 
+		if (plrMover->GetMapId() == 618 && plrMover->GetBattleground()) //BSWOW 05/01/2014: modificação do zaraki para desbugar o elevador e quedas no infinito na arena Ring Of Valor
+		{
+			if ((movementInfo.pos.GetPositionZ() < 27.0f) && (plrMover->GetBattleground()->GetStartTime() > 82000))
+				plrMover->TeleportTo(618, 763.5f, -284, 28.276f, 2.422f, false);
+
+			if ((movementInfo.pos.GetPositionZ() < 2.7f) && (plrMover->GetBattleground()->GetStartTime() < 77000))
+				plrMover->TeleportTo(618, movementInfo.pos.GetPositionX(), movementInfo.pos.GetPositionY(), 16.276f, 2.422f, false);
+		}
+		//BSWOW
+
         if (movementInfo.pos.GetPositionZ() < -500.0f)
         {
             if (!(plrMover->GetBattleground() && plrMover->GetBattleground()->HandlePlayerUnderMap(_player)))
