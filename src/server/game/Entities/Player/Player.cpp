@@ -1837,6 +1837,10 @@ void Player::Update(uint32 p_time)
     //because we don't want player's ghost teleported from graveyard
     if (IsHasDelayedTeleport() && IsAlive())
         TeleportTo(m_teleport_dest, m_teleport_options);
+
+	//BSWOW 06/01/14 - Mod pra verificar auras pilantras de items
+	//if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TRINKET1))
+	//	std::cout << "  b: " << pItem->get
 }
 
 void Player::setDeathState(DeathState s)
@@ -18469,6 +18473,8 @@ void Player::_LoadBoundInstances(PreparedQueryResult result)
             uint32 mapId = fields[2].GetUInt16();
             uint32 instanceId = fields[0].GetUInt32();
             uint8 difficulty = fields[3].GetUInt8();
+			//BSWOW 13/01/14 Fix dos CDs
+			uint32 instanceId2 = fields[5].GetUInt32();
 
             time_t resetTime = time_t(fields[4].GetUInt32());
             // the resettime for normal instances is only saved when the InstanceSave is unloaded
@@ -18510,7 +18516,12 @@ void Player::_LoadBoundInstances(PreparedQueryResult result)
                 PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_INSTANCE_BY_INSTANCE_GUID);
 
                 stmt->setUInt32(0, GetGUIDLow());
-                stmt->setUInt32(1, instanceId);
+				//BSWOW 13/01/14 Fix de CDs
+				if (instanceId == 0 && instanceId2 != 0)
+					  stmt->setUInt32(1, instanceId2);
+				else
+				//BSWOW
+				stmt->setUInt32(1, instanceId);
 
                 CharacterDatabase.Execute(stmt);
 
