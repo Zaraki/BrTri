@@ -3031,6 +3031,9 @@ void SpellMgr::LoadSpellInfoCorrections()
 
         switch (spellInfo->Id)
         {
+			case 24259: // Spell Lock silence
+				spellInfo->Speed = 80;
+				break;
             case 53096: // Quetz'lun's Judgment
                 spellInfo->MaxAffectedTargets = 1;
                 break;

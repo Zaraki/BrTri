@@ -430,9 +430,9 @@ void WorldSession::LogoutPlayer(bool save)
         if (uint64 lguid = _player->GetLootGUID())
             DoLootRelease(lguid);
 
-		//BSWOW-FIX 11/10/13 Fix para o cara morrer quando desloga dentro de Raid quando está em combate.
+		//BSWOW-FIX 14/01/14 Fix para o cara morrer quando desloga quando está em combate, menos dentro de arena. (para evitar abusos de instant log out)
 		if(_player->IsInCombat()){
-			if(_player->GetMap() && _player->GetMap()->IsRaidOrHeroicDungeon()){
+			if (_player->GetMap() && !_player->GetMap()->IsBattleArena()){
 				_player->KillPlayer();
 			}
 		}
